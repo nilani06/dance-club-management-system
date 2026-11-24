@@ -208,259 +208,261 @@ st.divider()
 # SESSION POINTS CALCULATOR
 # ==========================
 
-st.header("🧮 Session Points Calculator")
+if admin_mode:
 
-punctuality = st.selectbox(
-    "Punctuality",
-    [
-        "Early",
-        "On Time",
-        "Late (2:31-2:40)",
-        "Late (2:41+)",
-        "Leaving Without Informing"
-    ]
-)
-
-attendance = st.selectbox(
-    "Attendance",
-    [
-        "Excused (Previous Day)",
-        "Excused (On The Day)",
-        "Not Excused"
-    ]
-)
-
-stretching = st.selectbox(
-    "Stretching",
-    [
-        "Warmed Up",
-        "Not Warmed Up"
-    ]
-)
-
-attire = st.selectbox(
-    "Attire",
-    [
-        "Correct Attire",
-        "Wrong Attire"
-    ]
-)
-
-phone = st.selectbox(
-    "Phone Rule",
-    [
-        "Followed The Rule",
-        "Haven't"
-    ]
-)
-
-preparedness = st.selectbox(
-    "Preparedness",
-    [
-        "Prepared",
-        "Not Prepared"
-    ]
-)
-
-event = st.selectbox(
-    "Event Commitment",
-    [
-        "None",
-        "Participated",
-        "Bailed"
-    ]
-)
-
-if st.button("Calculate Session Points"):
-
-    total = 0
-
-    punctuality_points = 0
-    warmup_points = 0
-    attire_points = 0
-    preparedness_points = 0
-
-    # Punctuality
-    if punctuality == "Early":
-        punctuality_points = 5
-
-    elif punctuality == "On Time":
-        punctuality_points = 3
-
-    elif punctuality == "Late (2:31-2:40)":
-        punctuality_points = -3
-
-    elif punctuality == "Late (2:41+)":
-        punctuality_points = -5
-
-    elif punctuality == "Leaving Without Informing":
-        punctuality_points = -5
-
-    total += punctuality_points
-
-    # Attendance
-
-    if attendance == "Excused (On The Day)":
-        total -= 3
-
-    elif attendance == "Not Excused":
-        total -= 5
-
-    # Stretching
-
-    if stretching == "Warmed Up":
-        warmup_points = 2
-    else:
-        warmup_points = -2
-
-    total += warmup_points
-
-    # Attire
-
-    if attire == "Correct Attire":
-        attire_points = 2
-    else:
-        attire_points = -2
-
-    total += attire_points
-
-    # Phone Rule
-
-    if phone == "Followed The Rule":
-        total += 2
-    else:
-        total -= 5
-
-    # Preparedness
-
-    if preparedness == "Prepared":
-        preparedness_points = 3
-    else:
-        preparedness_points = -3
-
-    total += preparedness_points
-
-# update csv
-    row = students_df[
-        students_df["Student Name"] == student_name
-    ].index[0]
-
-    students_df.at[row, "Total Points"] += total
-
-    students_df.at[row, "Most Punctual"] += punctuality_points
-
-    students_df.at[row, "Best Warm-Up"] += warmup_points
-
-    students_df.at[row, "Best Attire"] += attire_points
-
-    students_df.at[row, "Most Prepared"] += preparedness_points
-
-    students_df.to_csv(
-        "students.csv",
-        index=False
+    st.header("🧮 Session Points Calculator")
+    
+    punctuality = st.selectbox(
+        "Punctuality",
+        [
+            "Early",
+            "On Time",
+            "Late (2:31-2:40)",
+            "Late (2:41+)",
+            "Leaving Without Informing"
+        ]
     )
-
-    new_total = students_df.at[row, "Total Points"]
-
-    st.success(
-        f"✅ {student_name} has been updated successfully!"
+    
+    attendance = st.selectbox(
+        "Attendance",
+        [
+            "Excused (Previous Day)",
+            "Excused (On The Day)",
+            "Not Excused"
+        ]
     )
-
-    st.write("### Session Summary")
-
-    st.write(f"Session Points Earned: {total}")
-
-    st.write(f"New Total Points: {new_total}")
-
-    st.write(
-        f"🏃 Most Punctual: "
-        f"{students_df.at[row, 'Most Punctual']}"
+    
+    stretching = st.selectbox(
+        "Stretching",
+        [
+            "Warmed Up",
+            "Not Warmed Up"
+        ]
     )
-
-    st.write(
-        f"🧘 Best Warm-Up: "
-        f"{students_df.at[row, 'Best Warm-Up']}"
+    
+    attire = st.selectbox(
+        "Attire",
+        [
+            "Correct Attire",
+            "Wrong Attire"
+        ]
     )
-
-    st.write(
-        f"👕 Best Attire: "
-        f"{students_df.at[row, 'Best Attire']}"
+    
+    phone = st.selectbox(
+        "Phone Rule",
+        [
+            "Followed The Rule",
+            "Haven't"
+        ]
     )
-
-    st.write(
-        f"📚 Most Prepared: "
-        f"{students_df.at[row, 'Most Prepared']}"
+    
+    preparedness = st.selectbox(
+        "Preparedness",
+        [
+            "Prepared",
+            "Not Prepared"
+        ]
     )
-
-    st.balloons()
-
-    st.rerun()
-
-st.divider()
-
-st.header("↩️ Undo / Manual Correction")
-
-undo_student = st.selectbox(
-    "Select Student",
-    sorted(students_df["Student Name"].tolist()),
-    key="undo_student"
-)
-
-undo_total = st.number_input(
-    "Adjust Total Points",
-    value=0
-)
-
-undo_punctual = st.number_input(
-    "Adjust Most Punctual",
-    value=0,
-    key="undo_punctual"
-)
-
-undo_warmup = st.number_input(
-    "Adjust Best Warm-Up",
-    value=0,
-    key="undo_warmup"
-)
-
-undo_attire = st.number_input(
-    "Adjust Best Attire",
-    value=0,
-    key="undo_attire"
-)
-
-undo_prepared = st.number_input(
-    "Adjust Most Prepared",
-    value=0,
-    key="undo_prepared"
-)
-
-if st.button("Apply Correction"):
-
-    row = students_df[
-        students_df["Student Name"] == undo_student
-    ].index[0]
-
-    students_df.at[row, "Total Points"] += undo_total
-
-    students_df.at[row, "Most Punctual"] += undo_punctual
-
-    students_df.at[row, "Best Warm-Up"] += undo_warmup
-
-    students_df.at[row, "Best Attire"] += undo_attire
-
-    students_df.at[row, "Most Prepared"] += undo_prepared
-
-    students_df.to_csv(
-        "students.csv",
-        index=False
+    
+    event = st.selectbox(
+        "Event Commitment",
+        [
+            "None",
+            "Participated",
+            "Bailed"
+        ]
     )
-
-    st.success(
-        f"✅ Corrections applied to {undo_student}"
+    
+    if st.button("Calculate Session Points"):
+    
+        total = 0
+    
+        punctuality_points = 0
+        warmup_points = 0
+        attire_points = 0
+        preparedness_points = 0
+    
+        # Punctuality
+        if punctuality == "Early":
+            punctuality_points = 5
+    
+        elif punctuality == "On Time":
+            punctuality_points = 3
+    
+        elif punctuality == "Late (2:31-2:40)":
+            punctuality_points = -3
+    
+        elif punctuality == "Late (2:41+)":
+            punctuality_points = -5
+    
+        elif punctuality == "Leaving Without Informing":
+            punctuality_points = -5
+    
+        total += punctuality_points
+    
+        # Attendance
+    
+        if attendance == "Excused (On The Day)":
+            total -= 3
+    
+        elif attendance == "Not Excused":
+            total -= 5
+    
+        # Stretching
+    
+        if stretching == "Warmed Up":
+            warmup_points = 2
+        else:
+            warmup_points = -2
+    
+        total += warmup_points
+    
+        # Attire
+    
+        if attire == "Correct Attire":
+            attire_points = 2
+        else:
+            attire_points = -2
+    
+        total += attire_points
+    
+        # Phone Rule
+    
+        if phone == "Followed The Rule":
+            total += 2
+        else:
+            total -= 5
+    
+        # Preparedness
+    
+        if preparedness == "Prepared":
+            preparedness_points = 3
+        else:
+            preparedness_points = -3
+    
+        total += preparedness_points
+    
+    # update csv
+        row = students_df[
+            students_df["Student Name"] == student_name
+        ].index[0]
+    
+        students_df.at[row, "Total Points"] += total
+    
+        students_df.at[row, "Most Punctual"] += punctuality_points
+    
+        students_df.at[row, "Best Warm-Up"] += warmup_points
+    
+        students_df.at[row, "Best Attire"] += attire_points
+    
+        students_df.at[row, "Most Prepared"] += preparedness_points
+    
+        students_df.to_csv(
+            "students.csv",
+            index=False
+        )
+    
+        new_total = students_df.at[row, "Total Points"]
+    
+        st.success(
+            f"✅ {student_name} has been updated successfully!"
+        )
+    
+        st.write("### Session Summary")
+    
+        st.write(f"Session Points Earned: {total}")
+    
+        st.write(f"New Total Points: {new_total}")
+    
+        st.write(
+            f"🏃 Most Punctual: "
+            f"{students_df.at[row, 'Most Punctual']}"
+        )
+    
+        st.write(
+            f"🧘 Best Warm-Up: "
+            f"{students_df.at[row, 'Best Warm-Up']}"
+        )
+    
+        st.write(
+            f"👕 Best Attire: "
+            f"{students_df.at[row, 'Best Attire']}"
+        )
+    
+        st.write(
+            f"📚 Most Prepared: "
+            f"{students_df.at[row, 'Most Prepared']}"
+        )
+    
+        st.balloons()
+    
+        st.rerun()
+    
+    st.divider()
+    
+    st.header("↩️ Undo / Manual Correction")
+    
+    undo_student = st.selectbox(
+        "Select Student",
+        sorted(students_df["Student Name"].tolist()),
+        key="undo_student"
     )
-
-    st.rerun()
+    
+    undo_total = st.number_input(
+        "Adjust Total Points",
+        value=0
+    )
+    
+    undo_punctual = st.number_input(
+        "Adjust Most Punctual",
+        value=0,
+        key="undo_punctual"
+    )
+    
+    undo_warmup = st.number_input(
+        "Adjust Best Warm-Up",
+        value=0,
+        key="undo_warmup"
+    )
+    
+    undo_attire = st.number_input(
+        "Adjust Best Attire",
+        value=0,
+        key="undo_attire"
+    )
+    
+    undo_prepared = st.number_input(
+        "Adjust Most Prepared",
+        value=0,
+        key="undo_prepared"
+    )
+    
+    if st.button("Apply Correction"):
+    
+        row = students_df[
+            students_df["Student Name"] == undo_student
+        ].index[0]
+    
+        students_df.at[row, "Total Points"] += undo_total
+    
+        students_df.at[row, "Most Punctual"] += undo_punctual
+    
+        students_df.at[row, "Best Warm-Up"] += undo_warmup
+    
+        students_df.at[row, "Best Attire"] += undo_attire
+    
+        students_df.at[row, "Most Prepared"] += undo_prepared
+    
+        students_df.to_csv(
+            "students.csv",
+            index=False
+        )
+    
+        st.success(
+            f"✅ Corrections applied to {undo_student}"
+        )
+    
+        st.rerun()
 
 st.divider()
 
