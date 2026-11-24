@@ -45,8 +45,6 @@ else:
 # STUDENT MANAGEMENT
 # ==========================
 
-st.header("👥 Student Management")
-
 with st.expander("➕ Add New Student"):
 
     new_name = st.text_input("Student Name")
