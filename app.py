@@ -19,119 +19,142 @@ students_df["Total Points"] = students_df["Total Points"].fillna(0)
 
 st.title("💃 Dance Club Management System")
 
+st.divider()
+
+user_type = st.radio(
+    "Select Access Type",
+    ["Student", "Teacher/Admin"]
+)
+
+admin_mode = False
+
+if user_type == "Teacher/Admin":
+
+    password = st.text_input(
+        "Teacher Password",
+        type="password"
+    )
+
+    if password == "Danceclub2026":
+        admin_mode = True
+        st.success("Admin Access Granted")
+    elif password != "":
+        st.error("Incorrect Password")
 
 # ==========================
 # STUDENT MANAGEMENT
 # ==========================
 
-st.header("👥 Student Management")
+if admin_mode:
 
-with st.expander("➕ Add New Student"):
+    st.header("👥 Student Management")
 
-    new_name = st.text_input("Student Name")
-
-    new_grade = st.selectbox(
-        "Grade",
-        [
-            "7A","7B","7C","7D","7E","7F",
-            "8A","8B","8C","8D","8E","8F",
-            "9A","9B","9C","9D","9E","9F",
-            "10A","10B","10C","10D","10E","10F",
-            "11A","11B","11C","11D","11E","11F",
-            "12A","12B","12C","12D","12E","12F",
-            "13A","13B","13C","13D","13E","13F"
-        ]
-    )
-
-    if st.button("Add Student"):
-
-        if new_name.strip() != "":
-
-            new_student = pd.DataFrame({
-                "Grade": [new_grade],
-                "Student Name": [new_name],
-                "Total Points": [0]
-            })
-
-            if new_name in students_df["Student Name"].values:
-                st.error("Student already exists")
-
-            students_df = pd.concat(
-                [students_df, new_student],
-                ignore_index=True
-            )
-
+    with st.expander("➕ Add New Student"):
+    
+        new_name = st.text_input("Student Name")
+    
+        new_grade = st.selectbox(
+            "Grade",
+            [
+                "7A","7B","7C","7D","7E","7F",
+                "8A","8B","8C","8D","8E","8F",
+                "9A","9B","9C","9D","9E","9F",
+                "10A","10B","10C","10D","10E","10F",
+                "11A","11B","11C","11D","11E","11F",
+                "12A","12B","12C","12D","12E","12F",
+                "13A","13B","13C","13D","13E","13F"
+            ]
+        )
+    
+        if st.button("Add Student"):
+    
+            if new_name.strip() != "":
+    
+                new_student = pd.DataFrame({
+                    "Grade": [new_grade],
+                    "Student Name": [new_name],
+                    "Total Points": [0]
+                })
+    
+                if new_name in students_df["Student Name"].values:
+                    st.error("Student already exists")
+    
+                students_df = pd.concat(
+                    [students_df, new_student],
+                    ignore_index=True
+                )
+    
+                students_df.to_csv(
+                    "students.csv",
+                    index=False
+                )
+    
+                st.success("Student Added Successfully!")
+                st.rerun()
+    
+    with st.expander("🗑 Delete Student"):
+    
+        delete_student = st.selectbox(
+            "Select Student To Delete",
+            sorted(students_df["Student Name"].tolist())
+        )
+    
+        if st.button("Delete Student"):
+    
+            students_df = students_df[
+                students_df["Student Name"] != delete_student
+            ]
+    
             students_df.to_csv(
                 "students.csv",
                 index=False
             )
-
-            st.success("Student Added Successfully!")
+    
+            st.success("Student Deleted Successfully!")
             st.rerun()
-
-with st.expander("🗑 Delete Student"):
-
-    delete_student = st.selectbox(
-        "Select Student To Delete",
-        sorted(students_df["Student Name"].tolist())
-    )
-
-    if st.button("Delete Student"):
-
-        students_df = students_df[
-            students_df["Student Name"] != delete_student
-        ]
-
-        students_df.to_csv(
-            "students.csv",
-            index=False
+    
+    st.divider()
+    
+    with st.expander("✏️ Edit Student"):
+    
+        student_to_edit = st.selectbox(
+            "Select Student To Edit",
+            sorted(students_df["Student Name"].tolist())
         )
-
-        st.success("Student Deleted Successfully!")
-        st.rerun()
-
-st.divider()
-
-with st.expander("✏️ Edit Student"):
-
-    student_to_edit = st.selectbox(
-        "Select Student To Edit",
-        sorted(students_df["Student Name"].tolist())
-    )
-
-    row = students_df[
-        students_df["Student Name"] == student_to_edit
-    ].index[0]
-
-    edit_grade = st.text_input(
-        "Grade",
-        value=str(students_df.at[row, "Grade"])
-    )
-
-    edit_name = st.text_input(
-        "Student Name",
-        value=str(students_df.at[row, "Student Name"])
-    )
-
-    edit_points = st.number_input(
-        "Total Points",
-        value=int(students_df.at[row, "Total Points"])
-    )
-
-    if st.button("Save Changes"):
-
-        students_df.at[row, "Grade"] = edit_grade
-        students_df.at[row, "Student Name"] = edit_name
-        students_df.at[row, "Total Points"] = edit_points
-
-        students_df.to_csv(
-            "students.csv",
-            index=False
+    
+        row = students_df[
+            students_df["Student Name"] == student_to_edit
+        ].index[0]
+    
+        edit_grade = st.text_input(
+            "Grade",
+            value=str(students_df.at[row, "Grade"])
         )
-
-        st.success("Student Updated Successfully!")
-
-        st.rerun()
+    
+        edit_name = st.text_input(
+            "Student Name",
+            value=str(students_df.at[row, "Student Name"])
+        )
+    
+        edit_points = st.number_input(
+            "Total Points",
+            value=int(students_df.at[row, "Total Points"])
+        )
+    
+        if st.button("Save Changes"):
+    
+            students_df.at[row, "Grade"] = edit_grade
+            students_df.at[row, "Student Name"] = edit_name
+            students_df.at[row, "Total Points"] = edit_points
+    
+            students_df.to_csv(
+                "students.csv",
+                index=False
+            )
+    
+            st.success("Student Updated Successfully!")
+    
+            st.rerun()
 
 # ==========================
 # STUDENT INFORMATION
