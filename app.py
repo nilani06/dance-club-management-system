@@ -73,7 +73,11 @@ if admin_mode:
                 new_student = pd.DataFrame({
                     "Grade": [new_grade],
                     "Student Name": [new_name],
-                    "Total Points": [0]
+                    "Total Points": [0],
+                    "Most Punctual": [0],
+                    "Best Warm-Up": [0],
+                    "Best Attire": [0],
+                    "Most Prepared": [0]
                 })
     
                 if new_name in students_df["Student Name"].values:
@@ -197,15 +201,6 @@ with col2:
 with col3:
     st.metric("Rank", f"#{rank}")
 
-new_student = pd.DataFrame({
-    "Grade": [new_grade],
-    "Student Name": [new_name],
-    "Total Points": [0],
-    "Most Punctual": [0],
-    "Best Warm-Up": [0],
-    "Best Attire": [0],
-    "Most Prepared": [0]
-})
 
 st.divider()
 
